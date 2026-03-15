@@ -486,7 +486,7 @@ try:
 
         @bot_router.message(CommandStart())
         async def cmd_start(message: AioMessage):
-            webapp_url = FRONTEND_URL or "https://trustleague-mvp.preview.emergentagent.com"
+            webapp_url = FRONTEND_URL or "https://emt-server-preview.preview.emergentagent.com"
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="Открыть TrustLeague", web_app=WebAppInfo(url=webapp_url))]
             ])
@@ -523,7 +523,7 @@ try:
                 "expires_at": (datetime.now(timezone.utc) + timedelta(minutes=30)).isoformat()
             }
             await db.handshake_sessions.insert_one(session_doc)
-            webapp_url = FRONTEND_URL or "https://trustleague-mvp.preview.emergentagent.com"
+            webapp_url = FRONTEND_URL or "https://emt-server-preview.preview.emergentagent.com"
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="Ответить в TrustLeague", web_app=WebAppInfo(url=f"{webapp_url}/handshake?session_id={session_id}"))]
             ])
@@ -545,7 +545,7 @@ try:
                 await message.answer("Используйте /start для регистрации")
                 return
             level_emoji = {"bronze": "Bronze", "silver": "Silver", "gold": "Gold", "legend": "Legend"}
-            webapp_url = FRONTEND_URL or "https://trustleague-mvp.preview.emergentagent.com"
+            webapp_url = FRONTEND_URL or "https://emt-server-preview.preview.emergentagent.com"
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="Подробнее", web_app=WebAppInfo(url=f"{webapp_url}/trust"))]
             ])
@@ -565,7 +565,7 @@ try:
                 text += f"{medals[i]} {circle['name']} — {circle['total_trust_score']} pts, {circle['member_count']} участников\n"
             if not circles:
                 text = "Пока нет кругов. Начните рукопожатие!"
-            webapp_url = FRONTEND_URL or "https://trustleague-mvp.preview.emergentagent.com"
+            webapp_url = FRONTEND_URL or "https://emt-server-preview.preview.emergentagent.com"
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="Полная таблица", web_app=WebAppInfo(url=f"{webapp_url}/leaderboard"))]
             ])
@@ -584,7 +584,7 @@ except Exception as e:
 async def notify_target(target_id, session_id, initiator_id):
     if not bot_available or not bot:
         return
-    webapp_url = FRONTEND_URL or "https://trustleague-mvp.preview.emergentagent.com"
+    webapp_url = FRONTEND_URL or "https://emt-server-preview.preview.emergentagent.com"
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Ответить в TrustLeague", web_app=WebAppInfo(url=f"{webapp_url}/handshake?session_id={session_id}"))]
     ])
