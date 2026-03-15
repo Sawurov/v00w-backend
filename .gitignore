@@ -1,1 +1,5 @@
 .venv
+-e 
+# Environment files
+*.env
+*.env.*
