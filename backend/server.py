@@ -615,14 +615,15 @@ async def start_bot_polling():
 
 @app.on_event("startup")
 async def startup():
-    await db.users.create_index("telegram_id", unique=True)
-    await db.users.create_index("username")
-    await db.handshake_sessions.create_index("id", unique=True)
-    await db.connections.create_index("id", unique=True)
-    await db.circles.create_index("id", unique=True)
-    await db.daily_challenges.create_index([("circle_id", 1), ("date", 1)])
-    await db.challenge_answers.create_index([("challenge_id", 1), ("user_telegram_id", 1)], unique=True)
-    await db.trust_badges.create_index("session_id")
+    if db is not None:
+        await db.users.create_index("telegram_id", unique=True)
+        await db.users.create_index("username")
+        await db.handshake_sessions.create_index("id", unique=True)
+        await db.connections.create_index("id", unique=True)
+        await db.circles.create_index("id", unique=True)
+        await db.daily_challenges.create_index([("circle_id", 1), ("date", 1)])
+        await db.challenge_answers.create_index([("challenge_id", 1), ("user_telegram_id", 1)], unique=True)
+        await db.trust_badges.create_index("session_id")
     # Bot polling disabled in serverless (Vercel) - use webhooks instead
     logger.info("TrustLeague API started")
 
