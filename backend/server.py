@@ -192,6 +192,13 @@ async def register_user(body: UserUpdateRequest):
     user = await db.users.find_one({"telegram_id": body.telegram_id}, {"_id": 0})
     return user
 
+@api_router.get("/user/{username}")
+async def get_user_by_username(username: str):
+    user = await db.users.find_one({"username": username}, {"_id": 0, "telegram_id": 1})
+    if not user:
+        raise HTTPException(404, "Пользователь не найден")
+    return {"telegram_id": user["telegram_id"]}
+
 # ===================== HANDSHAKE ENDPOINTS =====================
 
 @api_router.post("/handshake/init")
@@ -624,7 +631,14 @@ async def startup():
         await db.daily_challenges.create_index([("circle_id", 1), ("date", 1)])
         await db.challenge_answers.create_index([("challenge_id", 1), ("user_telegram_id", 1)], unique=True)
         await db.trust_badges.create_index("session_id")
-    # Bot polling disabled in serverless (Vercel) - use webhooks instead
+
+    if bot_available and bot and dp:
+        asyncio.create_task(start_bot_polling())
+        logger.info("Telegram bot polling task started from startup")
+    else:
+        logger.info("Startup completed without Telegram bot polling (bot_available=%s)", bot_available)
+
+    # Bot polling may be disabled in some deployments (e.g. serverless/webhook setups)
     logger.info("TrustLeague API started")
 
 @app.on_event("shutdown")
