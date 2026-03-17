@@ -22,9 +22,9 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB
-mongo_url = os.environ['MONGO_URL']
-mongo_client = AsyncIOMotorClient(mongo_url)
-db = mongo_client[os.environ['DB_NAME']]
+mongo_url = os.environ.get('MONGO_URL', '')
+mongo_client = AsyncIOMotorClient(mongo_url) if mongo_url else None
+db = mongo_client[os.environ.get('DB_NAME', 'trustleague')] if mongo_client else None
 
 # Config
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '')
@@ -623,8 +623,7 @@ async def startup():
     await db.daily_challenges.create_index([("circle_id", 1), ("date", 1)])
     await db.challenge_answers.create_index([("challenge_id", 1), ("user_telegram_id", 1)], unique=True)
     await db.trust_badges.create_index("session_id")
-    if bot_available and dp:
-        asyncio.create_task(start_bot_polling())
+    # Bot polling disabled in serverless (Vercel) - use webhooks instead
     logger.info("TrustLeague API started")
 
 @app.on_event("shutdown")
@@ -640,10 +639,12 @@ async def shutdown():
 
 # Include router + CORS
 app.include_router(api_router)
+cors_origins_raw = os.environ.get('CORS_ORIGINS', '*')
+cors_origins = cors_origins_raw.split(',') if cors_origins_raw != '*' else ['*']
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_credentials=cors_origins_raw != '*',
+    allow_origins=cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
