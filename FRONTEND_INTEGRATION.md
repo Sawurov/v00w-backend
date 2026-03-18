@@ -1,4 +1,4 @@
-# TrustLeague Backend - Инструкции для Frontend
+# v00w Backend - Инструкции для Frontend
 
 ## Backend API URL
 

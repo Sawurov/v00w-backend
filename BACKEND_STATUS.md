@@ -1,4 +1,4 @@
-# TrustLeague - Связка Frontend + Backend
+# v00w - Связка Frontend + Backend
 
 ## Текущий статус
 

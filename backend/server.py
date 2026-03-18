@@ -64,7 +64,7 @@ CHALLENGE_BANK = [
     {"question": "Какой город является столицей Казахстана?", "options": ["Алматы", "Астана", "Шымкент", "Караганда"], "answer_index": 1, "explanation": "Астана — столица Казахстана с 1997 года."},
     {"question": "Кто создал Telegram?", "options": ["Марк Цукерберг", "Джек Дорси", "Павел Дуров", "Илон Маск"], "answer_index": 2, "explanation": "Павел Дуров основал Telegram в 2013 году."},
     {"question": "Что такое SBT в контексте блокчейна?", "options": ["Simple Block Token", "Soulbound Token", "Smart Blockchain Transfer", "Secure Binary Transaction"], "answer_index": 1, "explanation": "SBT (Soulbound Token) — непередаваемый токен, привязанный к кошельку."},
-    {"question": "Какой блокчейн использует TrustLeague?", "options": ["Ethereum", "Solana", "TON", "Bitcoin"], "answer_index": 2, "explanation": "TrustLeague построен на блокчейне TON (The Open Network)."},
+    {"question": "Какой блокчейн использует v00w?", "options": ["Ethereum", "Solana", "TON", "Bitcoin"], "answer_index": 2, "explanation": "v00w построен на блокчейне TON (The Open Network)."},
     {"question": "Сколько людей используют Telegram (примерно)?", "options": ["100 млн", "500 млн", "950+ млн", "2 млрд"], "answer_index": 2, "explanation": "Telegram имеет более 950 миллионов активных пользователей."},
     {"question": "Что означает рукопожатие в TrustLeague?", "options": ["Перевод денег", "Верификация дружбы", "Создание группы", "Блокировка"], "answer_index": 1, "explanation": "Рукопожатие — процесс взаимной верификации дружбы между пользователями."},
     {"question": "На каком языке написан TON?", "options": ["Python", "Rust", "C++", "Go"], "answer_index": 2, "explanation": "Ядро TON написано на C++ для максимальной производительности."},
@@ -158,7 +158,7 @@ class UserUpdateRequest(BaseModel):
 
 # ===================== APP + ROUTER =====================
 
-app = FastAPI(title="TrustLeague API")
+app = FastAPI(title="v00w API")
 api_router = APIRouter(prefix="/api")
 
 # ===================== AUTH ENDPOINT =====================
@@ -494,9 +494,11 @@ try:
         @bot_router.message(CommandStart())
         async def cmd_start(message: AioMessage):
             webapp_url = FRONTEND_URL or "https://emt-server-preview.preview.emergentagent.com"
-            keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="Открыть TrustLeague", web_app=WebAppInfo(url=webapp_url))]
-            ])
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text="Открыть v00w", web_app=WebAppInfo(url=webapp_url))]
+                ]
+            )
             await db.users.update_one(
                 {"telegram_id": message.from_user.id},
                 {"$set": {"username": message.from_user.username or "", "full_name": message.from_user.full_name or "", "last_seen": datetime.now(timezone.utc).isoformat()},
@@ -504,12 +506,12 @@ try:
                 upsert=True
             )
             await message.answer(
-                "Добро пожаловать в TrustLeague!\n\n"
+                "Добро пожаловать в v00w!\n\n"
                 "Превращай дружбу в верифицированное доверие в блокчейне TON.\n\n"
                 "/handshake @username — начать рукопожатие\n"
                 "/trust — твой рейтинг доверия\n"
                 "/leaderboard — топ кругов",
-                reply_markup=keyboard
+                reply_markup=keyboard,
             )
 
         @bot_router.message(Command("handshake"))
@@ -593,7 +595,7 @@ async def notify_target(target_id, session_id, initiator_id):
         return
     webapp_url = FRONTEND_URL or "https://emt-server-preview.preview.emergentagent.com"
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Ответить в TrustLeague", web_app=WebAppInfo(url=f"{webapp_url}/handshake?session_id={session_id}"))]
+        [InlineKeyboardButton(text="Ответить в TrustLeague", web_app=WebAppInfo(url=f"{webapp_url}?startapp=handshake_{session_id}"))]
     ])
     await bot.send_message(target_id, "Друг хочет верифицировать дружбу! Ответьте на секретный вопрос:", reply_markup=keyboard)
 
